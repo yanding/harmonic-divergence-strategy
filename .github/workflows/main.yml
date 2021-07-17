@@ -27,6 +27,5 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
-          name: backtest.txt
+          name: my-artifact
           path: backtest.txt
-          retention-days: 5
