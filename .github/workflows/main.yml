@@ -22,4 +22,11 @@ jobs:
         run: echo "Branch name ${GIT_BRANCH_NAME}"
 
       - name: Run Backtest
-        run: docker-compose run --rm backtesting
+        run: docker-compose run --rm backtesting > backtest.txt
+      
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: backtest
+          path: backtest.txt
+          retention-days: 5
