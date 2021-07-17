@@ -27,5 +27,5 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
-          name: backtest${{ matrix.timerange }}_${{ matrix.opentrades }}
+          name: backtest_result
           path: backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}.txt
