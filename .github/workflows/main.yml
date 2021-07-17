@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         timerange: [20210101-20210201, 20210201-20210301, 20210301-20210401, 20210401-20210501, 20210601-20210701]
-        opentrades: [1, 2, 3, 4, 5]
+        opentrades: [5]
     runs-on: ubuntu-latest
 
     steps:
