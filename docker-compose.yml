@@ -9,7 +9,7 @@ services:
     command: >
       backtesting
       --strategy-list NostalgiaForInfinityV8
-      --timerange 
+      --timerange ${TIMERANGE}
       --config user_data/pairlists.json
       --config user_data/one_trade_unlimited.json
       --max-open-trades
