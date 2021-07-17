@@ -42,7 +42,7 @@ from technical.indicators import zema
 ###########################################################################################################
 
 
-class NostalgiaForInfinityV8(IStrategy):
+class NostalgiaForInfinityNext(IStrategy):
     INTERFACE_VERSION = 2
 
     # # ROI table:
@@ -81,8 +81,8 @@ class NostalgiaForInfinityV8(IStrategy):
 
     # Optional order type mapping.
     order_types = {
-        'buy': 'market',
-        'sell': 'market',
+        'buy': 'limit',
+        'sell': 'limit',
         'trailing_stop_loss': 'limit',
         'stoploss': 'limit',
         'stoploss_on_exchange': False
@@ -2020,43 +2020,100 @@ class NostalgiaForInfinityV8(IStrategy):
 
         return False, None
 
-    def sell_r(self, current_profit: float, last_candle) -> tuple:
+    def sell_r_1(self, current_profit: float, last_candle) -> tuple:
         if (0.02 > current_profit > 0.012):
             if (last_candle['r_480'] > -5.0):
-                return True, 'signal_profit_w_1'
+                return True, 'signal_profit_w_1_1'
         elif (0.03 > current_profit > 0.02):
             if (last_candle['r_480'] > -5.5):
-                return True, 'signal_profit_w_2'
+                return True, 'signal_profit_w_1_2'
         elif (0.04 > current_profit > 0.03):
             if (last_candle['r_480'] > -6.0):
-                return True, 'signal_profit_w_3'
+                return True, 'signal_profit_w_1_3'
         elif (0.05 > current_profit > 0.04):
             if (last_candle['r_480'] > -6.5):
-                return True, 'signal_profit_w_4'
+                return True, 'signal_profit_w_1_4'
         elif (0.06 > current_profit > 0.05):
             if (last_candle['r_480'] > -6.0):
-                return True, 'signal_profit_w_5'
+                return True, 'signal_profit_w_1_5'
         elif (0.07 > current_profit > 0.06):
             if (last_candle['r_480'] > -7.0):
-                return True, 'signal_profit_w_6'
+                return True, 'signal_profit_w_1_6'
         elif (0.08 > current_profit > 0.07):
             if (last_candle['r_480'] > -6.0):
-                return True, 'signal_profit_w_7'
+                return True, 'signal_profit_w_1_7'
         elif (0.09 > current_profit > 0.08):
             if (last_candle['r_480'] > -5.5):
-                return True, 'signal_profit_w_8'
+                return True, 'signal_profit_w_1_8'
         elif (0.1 > current_profit > 0.09):
             if (last_candle['r_480'] > -4.5):
-                return True, 'signal_profit_w_9'
+                return True, 'signal_profit_w_1_9'
         elif (0.12 > current_profit > 0.1):
             if (last_candle['r_480'] > -9.5):
-                return True, 'signal_profit_w_10'
+                return True, 'signal_profit_w_1_10'
         elif (0.2 > current_profit > 0.12):
             if (last_candle['r_480'] > -4.0) & (last_candle['rsi'] > 78.0):
-                return True, 'signal_profit_w_11'
+                return True, 'signal_profit_w_1_11'
         elif (current_profit > 0.2):
             if (last_candle['r_480'] > -3.0) & (last_candle['rsi'] > 80.0):
-                return True, 'signal_profit_w_12'
+                return True, 'signal_profit_w_1_12'
+
+        return False, None
+
+    def sell_r_2(self, current_profit: float, last_candle) -> tuple:
+        if (0.02 > current_profit > 0.012):
+            if (last_candle['r_480'] > -4.0) & (last_candle['rsi'] > 78.0) & (last_candle['stochrsi_fastk_96'] > 99.0) & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_1'
+        elif (0.03 > current_profit > 0.02):
+            if (last_candle['r_480'] > -4.5) & (last_candle['rsi'] > 78.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_2'
+        elif (0.04 > current_profit > 0.03):
+            if (last_candle['r_480'] > -5.0) & (last_candle['rsi'] > 78.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_3'
+        elif (0.05 > current_profit > 0.04):
+            if (last_candle['r_480'] > -5.5) & (last_candle['rsi'] > 78.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_4'
+        elif (0.06 > current_profit > 0.05):
+            if (last_candle['r_480'] > -6.0) & (last_candle['rsi'] > 78.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_5'
+        elif (0.07 > current_profit > 0.06):
+            if (last_candle['r_480'] > -30.0) & (last_candle['rsi'] > 79.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_6'
+        elif (0.08 > current_profit > 0.07):
+            if (last_candle['r_480'] > -34.0) & (last_candle['rsi'] > 80.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_7'
+        elif (0.09 > current_profit > 0.08):
+            if (last_candle['r_480'] > -7.0) & (last_candle['rsi'] > 80.5) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_8'
+        elif (0.1 > current_profit > 0.09):
+            if (last_candle['r_480'] > -6.0) & (last_candle['rsi'] > 80.5) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_9'
+        elif (0.12 > current_profit > 0.1):
+            if (last_candle['r_480'] > -5.0) & (last_candle['rsi'] > 80.5) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_10'
+        elif (0.2 > current_profit > 0.12):
+            if (last_candle['r_480'] > -4.0) & (last_candle['rsi'] > 81.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_11'
+        elif (current_profit > 0.2):
+            if (last_candle['r_480'] > -3.0) & (last_candle['rsi'] > 81.5) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_2_12'
+
+        return False, None
+
+
+    def sell_r_3(self, current_profit: float, last_candle) -> tuple:
+        if (0.02 > current_profit > 0.012):
+            if (last_candle['r_480'] > -6.0) & (last_candle['rsi'] > 74.0) & (last_candle['stochrsi_fastk_96'] > 99.0) & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_3_1'
+        elif (0.03 > current_profit > 0.02):
+            if (last_candle['r_480'] > -8.0) & (last_candle['rsi'] > 74.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_3_2'
+        elif (0.04 > current_profit > 0.03):
+            if (last_candle['r_480'] > -29.0) & (last_candle['rsi'] > 74.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_3_3'
+        elif (0.05 > current_profit > 0.04):
+            if (last_candle['r_480'] > -30.0) & (last_candle['rsi'] > 79.0) & (last_candle['stochrsi_fastk_96'] > 99.0)  & (last_candle['stochrsi_fastd_96'] > 99.0):
+                return True, 'signal_profit_w_3_4'
 
         return False, None
 
@@ -2129,8 +2186,18 @@ class NostalgiaForInfinityV8(IStrategy):
             if (sell) and (signal_name is not None):
                 return signal_name
 
-            # Williams %R based sell
-            sell, signal_name = self.sell_r(current_profit, last_candle)
+            # Williams %R based sell 1
+            sell, signal_name = self.sell_r_1(current_profit, last_candle)
+            if (sell) and (signal_name is not None):
+                return signal_name
+
+            # Williams %R based sell 2
+            sell, signal_name = self.sell_r_2(current_profit, last_candle)
+            if (sell) and (signal_name is not None):
+                return signal_name
+
+            # Williams %R based sell 3
+            sell, signal_name = self.sell_r_3(current_profit, last_candle)
             if (sell) and (signal_name is not None):
                 return signal_name
 
@@ -2431,6 +2498,11 @@ class NostalgiaForInfinityV8(IStrategy):
 
         # Williams %R
         dataframe['r_480'] = williams_r(dataframe, period=480)
+
+        # Stochastic RSI
+        stochrsi = ta.STOCHRSI(dataframe, timeperiod=96, fastk_period=3, fastd_period=3, fastd_matype=0)
+        dataframe['stochrsi_fastk_96'] = stochrsi['fastk']
+        dataframe['stochrsi_fastd_96'] = stochrsi['fastd']
 
         # For sell checks
         dataframe['crossed_below_ema_12_26'] = qtpylib.crossed_below(dataframe['ema_12'], dataframe['ema_26'])

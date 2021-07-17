@@ -1,6 +1,8 @@
 # Freqtrade-Tester
 Test strategies on Freqtrader automatically.
 
+Testing [NFI Next 6726d91](https://github.com/iterativv/NostalgiaForInfinity/commit/6726d91178fb07cbd8d4294c791d06b5015ee5ae)
+
 ## Add your strategy
 
 Add strategies to the [user_data/strategies](user_data/strategies) folder and also in the [docker-compose.yml](docker-compose.yml) file at `strategy-list` add your strategy in the list.
