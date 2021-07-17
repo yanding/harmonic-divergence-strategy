@@ -42,7 +42,7 @@ from technical.indicators import zema
 ###########################################################################################################
 
 
-class Strategy(IStrategy):
+class NostalgiaForInfinityV8(IStrategy):
     INTERFACE_VERSION = 2
 
     # # ROI table:
