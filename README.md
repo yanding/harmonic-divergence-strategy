@@ -17,4 +17,13 @@ docker-compose run --rm backtesting
 
 ## Configure run
 
-If you want to change `--max-open-trades` or `--stake-amount` change the [.env](.env) file.
+If you want to change `--max-open-trades` or `--stake-amount` or `--timerange` change the [.env](.env) file.
+
+
+## Update pairs or timeframe
+
+If you want to update pairs [user_data/pairlists.json](user_data/pairlists.json) from `exchange:pair_whitelist` or timeframe from [docker-compose.yml](docker-compose.yml) from `download-data:timerange`, run the following after you changed.
+
+```bash
+docker-compose run --rm download-data
+```
