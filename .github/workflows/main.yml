@@ -16,11 +16,29 @@ jobs:
       - name: Echo the branch name
         run: echo "Branch name ${GIT_BRANCH_NAME}"
 
-      - name: Run Backtest
-        run: docker-compose run --rm backtesting > backtest.txt
+      - name: Backtest 1 unlimited
+        env:
+          MAX_OPEN_TRADES: 4
+          STAKE_AMOUNT: unlimited
+        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
 
-      - name: Show Backtest
-        run: cat backtest.txt
+      - name: Backtest 2 unlimited
+        env:
+          MAX_OPEN_TRADES: 4
+          STAKE_AMOUNT: unlimited
+        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+
+      - name: Backtest 3 unlimited
+        env:
+          MAX_OPEN_TRADES: 4
+          STAKE_AMOUNT: unlimited
+        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+
+      - name: Backtest 4 unlimited
+        env:
+          MAX_OPEN_TRADES: 4
+          STAKE_AMOUNT: unlimited
+        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
