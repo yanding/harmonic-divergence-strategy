@@ -1,11 +1,6 @@
 name: Backtest
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+on: [push, pull_request]
 
 jobs:
   main_job:
@@ -23,7 +18,10 @@ jobs:
 
       - name: Run Backtest
         run: docker-compose run --rm backtesting > backtest.txt
-      
+
+      - name: Show Backtest
+        run: cat backtest.txt
+
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
