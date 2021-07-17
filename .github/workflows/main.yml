@@ -16,32 +16,41 @@ jobs:
       - name: Echo the branch name
         run: echo "Branch name ${GIT_BRANCH_NAME}"
 
-      - name: Backtest 1 unlimited
+      - name: Run Backtest 1 trades
         env:
-          MAX_OPEN_TRADES: 4
+          MAX_OPEN_TRADES: 1
           STAKE_AMOUNT: unlimited
-        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+        run: docker-compose run --rm backtesting > backtest/backtest_1.txt
 
-      - name: Backtest 2 unlimited
+      - name: Run Backtest 2 trades
         env:
-          MAX_OPEN_TRADES: 4
+          MAX_OPEN_TRADES: 2
           STAKE_AMOUNT: unlimited
-        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+        run: docker-compose run --rm backtesting > backtest/backtest_2.txt
 
-      - name: Backtest 3 unlimited
+      - name: Run Backtest 3 trades
         env:
-          MAX_OPEN_TRADES: 4
+          MAX_OPEN_TRADES: 3
           STAKE_AMOUNT: unlimited
-        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+        run: docker-compose run --rm backtesting > backtest/backtest_3.txt
 
-      - name: Backtest 4 unlimited
+      - name: Run Backtest 4 trades
         env:
           MAX_OPEN_TRADES: 4
           STAKE_AMOUNT: unlimited
-        run: docker-compose run --rm backtesting > backtest.txt && cat backtest.txt
+        run: docker-compose run --rm backtesting > backtest/backtest_4.txt
+
+      - name: Show Backtest 1 trade
+        run: cat backtest/backtest_1.txt
+      - name: Show Backtest 2 trade
+        run: cat backtest/backtest_2.txt
+      - name: Show Backtest 3 trade
+        run: cat backtest/backtest_3.txt
+      - name: Show Backtest 4 trade
+        run: cat backtest/backtest_4.txt
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
-          path: backtest.txt
+          name: backtest
+          path: backtest/
