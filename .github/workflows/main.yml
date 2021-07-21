@@ -23,6 +23,7 @@ jobs:
           MAX_OPEN_TRADES: ${{ matrix.opentrades }}
           STAKE_AMOUNT: unlimited
           TIMERANGE: ${{ matrix.timerange }}
+          STRATEGY: ${{ matrix.strategy}}
         run: docker-compose run --rm backtesting > backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}_${{matrix.strategy}}.txt
 
       - name: Plot Profit ${{ matrix.opentrades }} trades ${{ matrix.timerange }} HarmonicDivergence
@@ -33,8 +34,16 @@ jobs:
           STRATEGY: ${{ matrix.strategy}}
         run: docker-compose run --rm plot-profit
         
+      - name: Plot Trades ${{ matrix.opentrades }} trades ${{ matrix.timerange }} HarmonicDivergence
+        env:
+          MAX_OPEN_TRADES: ${{ matrix.opentrades }}
+          STAKE_AMOUNT: unlimited
+          TIMERANGE: ${{ matrix.timerange }}
+          STRATEGY: ${{ matrix.strategy}}
+        run: docker-compose run --rm plot-dataframe
+
       - name: Show Backtest ${{ matrix.timerange }} ${{ matrix.opentrades }}
-        run: cat backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}.txt
+        run: cat backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}_${{matrix.strategy}}.txt
 
       - name: 'Upload Artifact Backtest Log'
         uses: actions/upload-artifact@v2

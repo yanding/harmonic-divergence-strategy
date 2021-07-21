@@ -143,7 +143,6 @@ class HarmonicDivergence(IStrategy):
         dataframe['ema20'] = ta.EMA(dataframe, timeperiod=20)
         dataframe['ema50'] = ta.EMA(dataframe, timeperiod=50)
         dataframe['ema200'] = ta.EMA(dataframe, timeperiod=200)
-        dataframe['shifted'] = implied_volatility(dataframe)
 
         return dataframe
 
@@ -177,18 +176,3 @@ class HarmonicDivergence(IStrategy):
             ),
             'sell'] = 1
         return dataframe
-
-def nans(length=1):
-    mtx = np.empty(length)
-    mtx[:] = np.nan
-    return mtx
-
-def implied_volatility(series, window=252):
-    try:
-        logret = np.log(series / series.shift(1)
-                       ).replace([np.inf, -np.inf], float('NaN'))
-        res = numpy_rolling_std(logret, window) * np.sqrt(window)
-    except Exception as e:
-        res = nans(len(series))
-
-    return pd.Series(index=series.index, data=res)
