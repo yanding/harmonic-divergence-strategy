@@ -8,12 +8,11 @@ services:
       - "./user_data:/freqtrade/user_data"
     command: >
       backtesting
-      --strategy-list HarmonicDivergence NostalgiaForInfinityNext
+      --strategy-list ${STRATEGY}
       --timerange ${TIMERANGE}
       --config user_data/config.json
       --datadir user_data/freqtrade-test-data/user_data/data/binance
-      --max-open-trades
-      ${MAX_OPEN_TRADES}
+      --max-open-trades ${MAX_OPEN_TRADES}
       --stake-amount ${STAKE_AMOUNT}
   plot-profit:
     image: freqtradeorg/freqtrade:develop_plot
