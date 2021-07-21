@@ -25,4 +25,5 @@ services:
       --timerange ${TIMERANGE}
       --datadir user_data/freqtrade-test-data/user_data/data/binance
       --config user_data/config.json
-      --export-filename freqtrade-profit-plot-${TIMERANGE}.html
+      --export-filename ${STRATEGY}-${TIMERANGE}.html
+      -s ${STRATEGY}

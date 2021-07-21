@@ -39,9 +39,7 @@ class HarmonicDivergence(IStrategy):
     # Minimal ROI designed for the strategy.
     # This attribute will be overridden if the config file contains "minimal_roi".
     minimal_roi = {
-        "60": 0.01,
-        "30": 0.02,
-        "0": 0.04
+        "0": 1
     }
 
     # Optimal stoploss designed for the strategy.
