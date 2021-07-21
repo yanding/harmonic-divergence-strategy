@@ -39,11 +39,11 @@ jobs:
       - name: 'Upload Artifact Backtest Log'
         uses: actions/upload-artifact@v2
         with:
-          name: backtest_result
+          name: backtest_${{ matrix.strategy}}_result
           path: backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}_${{matrix.strategy}}.txt
 
       - name: 'Upload Artifact Profit Plot'
         uses: actions/upload-artifact@v2
         with:
-          name: backtest_result
-          path: ${{matrix.strategy}}-${{matrix.timerange}}.html
+          name: backtest_${{ matrix.strategy}}_result
+          path: user_data/plot
