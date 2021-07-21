@@ -1,0 +1,3 @@
+[submodule "user_data/freqtrade-test-data"]
+	path = user_data/freqtrade-test-data
+	url = https://github.com/Ughuuu/freqtrade-test-data.git
