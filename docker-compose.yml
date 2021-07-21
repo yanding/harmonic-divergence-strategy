@@ -16,7 +16,7 @@ services:
       --stake-amount ${STAKE_AMOUNT}
   plot-profit:
     image: freqtradeorg/freqtrade:develop_plot
-    container_name: freqtrade-backtesting
+    container_name: freqtrade-develop_plot
     volumes:
       - "./user_data:/freqtrade/user_data"
     command: >
@@ -24,17 +24,15 @@ services:
       --timerange ${TIMERANGE}
       --datadir user_data/freqtrade-test-data/user_data/data/binance
       --config user_data/config.json
-      --export-filename ${STRATEGY}-${TIMERANGE}.html
       --strategy ${STRATEGY}
   plot-dataframe:
     image: freqtradeorg/freqtrade:develop_plot
-    container_name: freqtrade-backtesting
+    container_name: freqtrade-develop_plot
     volumes:
       - "./user_data:/freqtrade/user_data"
     command: >
-      plot-profit
+      plot-dataframe
       --timerange ${TIMERANGE}
       --datadir user_data/freqtrade-test-data/user_data/data/binance
       --config user_data/config.json
-      --export-filename ${STRATEGY}-${TIMERANGE}.html
       --strategy ${STRATEGY}

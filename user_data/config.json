@@ -33,7 +33,7 @@
           "enableRateLimit": true,
           "rateLimit": 200
       },
-      "pair_whitelist":[
+      "pair_whitelist2":[
         "AAVE/USDT",
         "ADA/USDT",
         "AION/USDT",
@@ -160,7 +160,10 @@
         "ZEN/USDT",
         "ZIL/USDT",
         "ZRX/USDT"
-    ]
+    ],
+    "pair_whitelist":[
+      "ETH/USDT"
+  ]
   },
   "pairlists": [
       {"method": "StaticPairList"}
