@@ -23,10 +23,23 @@ jobs:
           TIMERANGE: ${{ matrix.timerange }}
         run: docker-compose run --rm backtesting > backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}.txt
 
+      - name: Plot Profit ${{ matrix.opentrades }} trades ${{ matrix.timerange }}
+        env:
+          MAX_OPEN_TRADES: ${{ matrix.opentrades }}
+          STAKE_AMOUNT: unlimited
+          TIMERANGE: ${{ matrix.timerange }}
+        run: docker-compose run --rm plot-profit
+
       - name: Show Backtest ${{ matrix.timerange }} ${{ matrix.opentrades }}
         run: cat backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}.txt
 
-      - name: 'Upload Artifact'
+      - name: 'Upload Artifact Backtest Log'
+        uses: actions/upload-artifact@v2
+        with:
+          name: backtest_result
+          path: backtest_${{ matrix.timerange }}_${{ matrix.opentrades }}.txt
+
+      - name: 'Upload Artifact Profit Plot'
         uses: actions/upload-artifact@v2
         with:
           name: backtest_result

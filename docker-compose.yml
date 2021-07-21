@@ -15,3 +15,14 @@ services:
       --max-open-trades
       ${MAX_OPEN_TRADES}
       --stake-amount ${STAKE_AMOUNT}
+  plot-profit:
+    image: freqtradeorg/freqtrade:develop_plot
+    container_name: freqtrade-backtesting
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    command: >
+      plot-profit
+      --timerange ${TIMERANGE}
+      --datadir user_data/freqtrade-test-data/user_data/data/binance
+      --config user_data/config.json
+      --export-filename freqtrade-profit-plot-${TIMERANGE}.html
