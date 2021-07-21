@@ -162,7 +162,8 @@
         "ZRX/USDT"
     ],
     "pair_whitelist":[
-      "ETH/USDT"
+      "ETH/USDT",
+      "BTC/USDT"
   ]
   },
   "pairlists": [
