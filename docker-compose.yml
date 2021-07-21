@@ -8,10 +8,17 @@ services:
       - "./user_data:/freqtrade/user_data"
     command: >
       backtesting
-      --strategy-list NostalgiaForInfinityNext
+      --strategy-list HarmonicDivergence
       --timerange ${TIMERANGE}
       --config user_data/config.json
       --datadir user_data/freqtrade-test-data/user_data/data/binance
       --max-open-trades
       ${MAX_OPEN_TRADES}
       --stake-amount ${STAKE_AMOUNT}
+  newstrat:
+    image: freqtradeorg/freqtrade:develop
+    container_name: freqtrade-backtesting
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    command: >
+      new-strategy --strategy HarmonicDivergence
