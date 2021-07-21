@@ -2,6 +2,7 @@
 # flake8: noqa: F401
 
 # --- Do not remove these libs ---
+from typing import List
 import numpy as np  # noqa
 import pandas as pd  # noqa
 from pandas import DataFrame
@@ -13,7 +14,7 @@ from freqtrade.strategy import CategoricalParameter, DecimalParameter, IntParame
 # Add your lib to import here
 import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-
+from collections import deque
 
 class HarmonicDivergence(IStrategy):
     """
@@ -83,23 +84,14 @@ class HarmonicDivergence(IStrategy):
     plot_config = {
         # Main plot indicators (Moving averages, ...)
         'main_plot': {
-            'ema9': {'color': 'purple'},
-            'ema20': {'color': 'yellow'},
-            'kc_upperband' : {'color': 'blue'},
-            'kc_middleband' : {'color': 'blue'},
-            'kc_lowerband' : {'color': 'blue'}
+            "pivot_lows": {
+                "pivot_lows": {"color": "red"}
+            },
+            "pivot_highs": {
+                "pivot_highs": {"color": "green"}
+            }
         },
         'subplots': {
-            # Subplots - each dict defines one additional plot
-            "AO": {
-                'ao': {'color': 'blue'},
-            },
-            "RSI": {
-                'rsi': {'color': 'red'},
-            },
-            "SHIFTED": {
-                "shifted": {"color": "black"}
-            }
         }
     }
 
@@ -143,6 +135,9 @@ class HarmonicDivergence(IStrategy):
         dataframe['ema20'] = ta.EMA(dataframe, timeperiod=20)
         dataframe['ema50'] = ta.EMA(dataframe, timeperiod=50)
         dataframe['ema200'] = ta.EMA(dataframe, timeperiod=200)
+        pivots = pivot_points(dataframe)
+        dataframe['pivot_lows'] = pivots['pivot_lows']
+        dataframe['pivot_highs'] = pivots['pivot_highs']
 
         return dataframe
 
@@ -176,3 +171,56 @@ class HarmonicDivergence(IStrategy):
             ),
             'sell'] = 1
         return dataframe
+
+def divergence_finder_dataframe(dataframe: DataFrame, indicator_source: str) -> pd.Series:
+    lastClose = 0
+    lastIndicator = 0
+    lastDate = 0
+    for index, row in enumerate(dataframe.itertuples(index=True, name='Pandas')):
+        close = row.close
+        date = row.date
+        indicator = getattr(row, indicator_source)
+        divergence_finder([close, lastClose], [indicator, lastIndicator], [date, lastDate], index)
+        lastClose = close
+        lastIndicator = indicator
+        lastDate = date
+    return None
+
+def divergence_finder(close: List[float], indicator: List[float], date: List[float], index: int):
+    dontconfirm = False # Should we wait 1 extra bar to confirm the divergence
+    divlen = 0 #
+    pivot_period = 5 # Between 1 and 50. How many bars to use for a pivot.
+
+    if dontconfirm or indicator[0] > indicator[1] or close > close[1]:
+        startpoint = 0 if dontconfirm else 1
+        #for x in range(0, 10):
+        #    len = bar_index - array.get(pl_positions, x) + prd
+
+    return True
+
+def pivot_points(dataframe: DataFrame, window: int = 5) -> DataFrame:
+    pivot_points_lows = np.empty(len(dataframe['close'])) * np.nan
+    pivot_points_highs = np.empty(len(dataframe['close'])) * np.nan
+    last_values = deque()
+    for index, row in enumerate(dataframe.itertuples(index=True, name='Pandas')):
+        last_values.append(row)
+        if len(last_values) >= window * 2 + 1:
+            last_values.popleft()
+            current_value = last_values[window]
+            is_greater = True
+            is_less = True
+            for index in range(0, window):
+                left = last_values[index]
+                right = last_values[window - index]
+                if current_value < left or current_value < right:
+                    is_greater = False
+                if current_value > left or current_value > right:
+                    is_less = False
+            if is_greater:
+                pivot_points_lows[index] = row.high
+            if is_less:
+                pivot_points_lows[index] = row.low
+    return pd.DataFrame(index=dataframe.index, data={
+        'pivot_lows': pivot_points_lows,
+        'pivot_highs': pivot_points_highs
+    })
