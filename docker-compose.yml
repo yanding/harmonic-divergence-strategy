@@ -10,8 +10,8 @@ services:
       backtesting
       --strategy-list NostalgiaForInfinityNext
       --timerange ${TIMERANGE}
-      --config user_data/pairlists.json
-      --config user_data/one_trade_unlimited.json
+      --config user_data/config.json
+      --datadir user_data/freqtrade-test-data/user_data/data/binance
       --max-open-trades
       ${MAX_OPEN_TRADES}
       --stake-amount ${STAKE_AMOUNT}
