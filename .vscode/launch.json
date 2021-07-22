@@ -6,10 +6,10 @@
     "configurations": [
         {
             "name": "PowerShell: Launch Current File",
-            "type": "PowerShell",
+            "type": "python",
             "request": "launch",
-            "script": "${file}",
-            "cwd": "${file}"
+            "program": "${workspaceFolder}/test.py",
+            "console": "integratedTerminal",
         }
     ]
 }

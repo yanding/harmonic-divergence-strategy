@@ -85,13 +85,16 @@ class HarmonicDivergence(IStrategy):
         # Main plot indicators (Moving averages, ...)
         'main_plot': {
             "pivot_lows": {
-                "pivot_lows": {"color": "red"}
+                "pivot_lows": {'type': 'scatter', 'color': 'red'}
             },
             "pivot_highs": {
-                "pivot_highs": {"color": "green"}
+                "pivot_highs": {'type': 'triangle', 'color': 'green'}
             }
         },
-        'subplots': {
+        'subplots': {            
+            "pivot_highs": {
+                "pivot_highs": {'mode': 'markers', 'type': 'scatter', 'color': 'green'}
+            },
         }
     }
 
@@ -206,21 +209,21 @@ def pivot_points(dataframe: DataFrame, window: int = 5) -> DataFrame:
         last_values.append(row)
         if len(last_values) >= window * 2 + 1:
             last_values.popleft()
-            current_value = last_values[window]
+            current_value = last_values[window - 1]
             is_greater = True
             is_less = True
             for index in range(0, window):
                 left = last_values[index]
                 right = last_values[window - index]
-                if current_value < left or current_value < right:
+                if current_value.high < left.high or current_value.high < right.high:
                     is_greater = False
-                if current_value > left or current_value > right:
+                if current_value.low > left.low or current_value.low > right.low:
                     is_less = False
             if is_greater:
                 pivot_points_lows[index] = row.high
             if is_less:
                 pivot_points_lows[index] = row.low
-    return pd.DataFrame(index=dataframe.index, data={
+    return pd.DataFrame(index=dataframe.date, data={
         'pivot_lows': pivot_points_lows,
         'pivot_highs': pivot_points_highs
     })
