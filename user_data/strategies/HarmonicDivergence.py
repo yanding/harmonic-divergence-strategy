@@ -2,7 +2,7 @@
 # flake8: noqa: F401
 
 # --- Do not remove these libs ---
-from typing import List
+from typing import List, Tuple
 import numpy as np  # noqa
 import pandas as pd  # noqa
 from pandas import DataFrame
@@ -85,16 +85,31 @@ class HarmonicDivergence(IStrategy):
         # Main plot indicators (Moving averages, ...)
         'main_plot': {
             "pivot_lows": {
-                "pivot_lows": {'type': 'scatter', 'color': 'red'}
-            },
+                "plotly": {
+                    'mode': 'markers',
+                    'marker': {
+                        'symbol': 'diamond-open',
+                        'size': 11,
+                        'line': {
+                            'width': 2
+                        },
+                        'color': 'olive'
+                    }
+            }},
             "pivot_highs": {
-                "pivot_highs": {'type': 'triangle', 'color': 'green'}
-            }
+                "plotly": {
+                    'mode': 'markers',
+                    'marker': {
+                        'symbol': 'diamond-open',
+                        'size': 11,
+                        'line': {
+                            'width': 2
+                        },
+                        'color': 'violet'
+                    }
+            }},
         },
-        'subplots': {            
-            "pivot_highs": {
-                "pivot_highs": {'mode': 'markers', 'type': 'scatter', 'color': 'green'}
-            },
+        'subplots': {
         }
     }
 
@@ -109,7 +124,6 @@ class HarmonicDivergence(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for the strategies
         """
-        
         # Momentum Indicators
         # ------------------------------------
 
@@ -141,6 +155,7 @@ class HarmonicDivergence(IStrategy):
         pivots = pivot_points(dataframe)
         dataframe['pivot_lows'] = pivots['pivot_lows']
         dataframe['pivot_highs'] = pivots['pivot_highs']
+        dataframe['divergence_ema'] = divergence_finder_dataframe(dataframe, 'ema9')
 
         return dataframe
 
@@ -176,54 +191,105 @@ class HarmonicDivergence(IStrategy):
         return dataframe
 
 def divergence_finder_dataframe(dataframe: DataFrame, indicator_source: str) -> pd.Series:
-    lastClose = 0
-    lastIndicator = 0
-    lastDate = 0
+    divergences = np.empty(len(dataframe['close'])) * np.nan
+    low_iterator = []
+    high_iterator = []
     for index, row in enumerate(dataframe.itertuples(index=True, name='Pandas')):
-        close = row.close
-        date = row.date
-        indicator = getattr(row, indicator_source)
-        divergence_finder([close, lastClose], [indicator, lastIndicator], [date, lastDate], index)
-        lastClose = close
-        lastIndicator = indicator
-        lastDate = date
-    return None
+        if row['pivot_lows'] != np.nan:
+            low_iterator.append(index)
+        else:
+            low_iterator.append(low_iterator[-1])
+        if row['pivot_highs'] != np.nan:
+            high_iterator.append(index)
+        else:
+            high_iterator.append(high_iterator[-1])
 
-def divergence_finder(close: List[float], indicator: List[float], date: List[float], index: int):
-    dontconfirm = False # Should we wait 1 extra bar to confirm the divergence
-    divlen = 0 #
-    pivot_period = 5 # Between 1 and 50. How many bars to use for a pivot.
+    for index, row in enumerate(dataframe.itertuples(index=True, name='Pandas')):
+        if divergence_finder(dataframe,
+            dataframe[indicator_source],
+            low_iterator,
+            high_iterator,
+            index
+        ):
+            divergences[index] = row["close"]
+    return divergences
 
-    if dontconfirm or indicator[0] > indicator[1] or close > close[1]:
-        startpoint = 0 if dontconfirm else 1
-        #for x in range(0, 10):
-        #    len = bar_index - array.get(pl_positions, x) + prd
+def divergence_finder(dataframe, indicator, low_iterator, high_iterator, index):
+    if high_iterator[index] == index:
+        current_pivot = high_iterator[index]
+        prev_pivot = high_iterator[index - 1]
+        if ((dataframe['pivot_highs'][current_pivot] < high_iterator['pivot_highs'][prev_pivot] and indicator[current_pivot] > indicator[prev_pivot])
+        or (dataframe['pivot_highs'][current_pivot] > high_iterator['pivot_highs'][prev_pivot] and indicator[current_pivot] < indicator[prev_pivot])):
+            slope1 = (dataframe['pivot_highs'][current_pivot] - high_iterator['pivot_highs'][prev_pivot]) / (current_pivot - prev_pivot)
+            slope2 = (indicator[current_pivot] - indicator[prev_pivot]) / (current_pivot - prev_pivot)
+            return True
 
-    return True
+    return False
 
-def pivot_points(dataframe: DataFrame, window: int = 5) -> DataFrame:
+from enum import Enum
+
+class PivotSource(Enum):
+    HighLow = 0
+    Close = 1
+
+def check_if_pivot_is_greater_or_less(current_value, high_source: str, low_source: str, left, right) -> Tuple[bool, bool]:
+    is_greater = True
+    is_less = True
+    if (getattr(current_value, high_source) < getattr(left, high_source) or
+        getattr(current_value, high_source) < getattr(right, high_source)):
+        is_greater = False
+    if (getattr(current_value, low_source) > getattr(left, low_source) or
+        getattr(current_value, low_source) > getattr(right, low_source)):
+        is_less = False
+    return (is_greater, is_less)
+
+def pivot_points(dataframe: DataFrame, window: int = 5, pivot_source: PivotSource = PivotSource.Close) -> DataFrame:
+    high_source = None
+    low_source = None
+    if pivot_source == PivotSource.Close:
+        high_source = 'close'
+        low_source = 'close'
+    elif pivot_source == PivotSource.HighLow:
+        high_source = 'high'
+        low_source = 'low'
     pivot_points_lows = np.empty(len(dataframe['close'])) * np.nan
     pivot_points_highs = np.empty(len(dataframe['close'])) * np.nan
     last_values = deque()
+    # find pivot points
     for index, row in enumerate(dataframe.itertuples(index=True, name='Pandas')):
         last_values.append(row)
         if len(last_values) >= window * 2 + 1:
-            last_values.popleft()
-            current_value = last_values[window - 1]
+            current_value = last_values[window]
             is_greater = True
             is_less = True
-            for index in range(0, window):
-                left = last_values[index]
-                right = last_values[window - index]
-                if current_value.high < left.high or current_value.high < right.high:
-                    is_greater = False
-                if current_value.low > left.low or current_value.low > right.low:
-                    is_less = False
+            for window_index in range(0, window):
+                left = last_values[window_index]
+                right = last_values[2 * window - window_index]
+                local_is_greater, local_is_less = check_if_pivot_is_greater_or_less(current_value, high_source, low_source, left, right)
+                is_greater &= local_is_greater
+                is_less &= local_is_less
             if is_greater:
-                pivot_points_lows[index] = row.high
+                pivot_points_highs[index - window] = getattr(current_value, high_source)
             if is_less:
-                pivot_points_lows[index] = row.low
-    return pd.DataFrame(index=dataframe.date, data={
+                pivot_points_lows[index - window] = getattr(current_value, low_source)
+            last_values.popleft()
+    # find last one
+    if len(last_values) >= window + 2:
+        current_value = last_values[-2]
+        is_greater = True
+        is_less = True
+        for window_index in range(0, window):
+            left = last_values[-2 - window_index - 1]
+            right = last_values[-1]
+            local_is_greater, local_is_less = check_if_pivot_is_greater_or_less(current_value, high_source, low_source, left, right)
+            is_greater &= local_is_greater
+            is_less &= local_is_less
+        if is_greater:
+            pivot_points_highs[index - 1] = getattr(current_value, high_source)
+        if is_less:
+            pivot_points_lows[index - 1] = getattr(current_value, low_source)
+        print((is_greater, is_less))
+    return pd.DataFrame(index=dataframe.index, data={
         'pivot_lows': pivot_points_lows,
         'pivot_highs': pivot_points_highs
     })
