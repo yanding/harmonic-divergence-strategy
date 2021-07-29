@@ -4,8 +4,7 @@
   "stake_amount": "unlimited",
   "tradable_balance_ratio": 0.99,
   "fiat_display_currency": "USD",
-  "timeframe": "5m",
-  "dry_run": false,
+  "dry_run": true,
   "dry_run_wallet": 1000,
   "cancel_open_orders_on_exit": false,
   "bid_strategy": {
@@ -33,7 +32,7 @@
       "enableRateLimit": true,
       "rateLimit": 200
     },
-    "pair_whitelist2": [
+    "pair_whitelist": [
       "AAVE/USDT",
       "ADA/USDT",
       "AION/USDT",
@@ -161,7 +160,7 @@
       "ZIL/USDT",
       "ZRX/USDT"
     ],
-    "pair_whitelist": ["BTC/USDT"]
+    "pair_whitelist2": ["ETH/USDT"]
   },
   "pairlists": [{ "method": "StaticPairList" }]
 }
